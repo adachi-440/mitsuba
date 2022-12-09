@@ -8,7 +8,10 @@
   "scripts": {
     "build": "hardhat compile",
     "test": "hardhat test",
-    "deploy-goerli": "hardhat run --network goerli scripts/deploy.ts"
+    "deploy-goerli": "hardhat run --network goerli scripts/deploy.ts",
+    "deploy-oft-moonbase": "hardhat run --network moonbase scripts/deployOFT.ts",
+    "deploy-oft-arbitrum-goerli": "hardhat run --network arbitrum-goerli scripts/deployOFT.ts",
+    "bridge-oft": "hardhat run --network moonbase test/oftTest.ts"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
@@ -18,6 +21,7 @@
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@nomiclabs/hardhat-ethers": "^2.0.0",
     "@nomiclabs/hardhat-etherscan": "^3.0.0",
+    "@openzeppelin/contracts": "^4.8.0",
     "@typechain/ethers-v5": "^10.1.0",
     "@typechain/hardhat": "^6.1.2",
     "@types/chai": "^4.2.0",
