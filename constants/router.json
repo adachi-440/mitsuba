@@ -1,5 +1,6 @@
 {
-  "arbitrum-goerli": "0x950BB93b195C5eB968fc94C22d2183c985eadF7A",
-  "optimism-goerli": "0xae92d5aD7583AD66E49A0c67BAd18F6ba52dDDc1",
-  "moonbase": "0x0dbB8A006B16d19aA85339b4CF6212E6b7119E3E"
+  "mumbai": "0x97a57448037C208a4e184039fd00fD9e055eb499",
+  "arbitrum-goerli": "0x1cB8aABe832B02B830d7Ed35db1B200DbE43D416",
+  "optimism-goerli": "0xca856dA32e13deb67157aa362644940Ef2555AA6",
+  "moonbase": "0x3077020f22A7846423868eB5a9770E431C242E93"
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/ICrossChainRouter.sol";
 import "./interfaces/IReceiver.sol";
 
@@ -10,19 +11,22 @@ import "./interfaces/IReceiver.sol";
  * @title QVVoting
  * @dev the manager for proposals / votes
  */
-contract Voting is Ownable {
+contract Voting is Ownable, IReceiver {
     using SafeMath for uint256;
 
+    IERC20 public immutable stakingToken;
     uint256 private _totalSupply;
     string public symbol;
     string public name;
-    mapping(address => uint256) private _balances;
+    uint32[] private chainIds;
+    mapping(address => mapping(uint32 => uint256)) private _balancesOfEachChain;
 
     event VoteCasted(address voter, uint ProposalID, uint256 weight);
 
     event ProposalCreated(
         address creator,
         uint256 ProposalID,
+        string title,
         string description,
         uint votingTimeInHours
     );
@@ -38,6 +42,7 @@ contract Voting is Ownable {
         ProposalStatus status;
         uint256 yesVotes;
         uint256 noVotes;
+        string title;
         string description;
         address[] voters;
         uint expirationTime;
@@ -53,9 +58,52 @@ contract Voting is Ownable {
     mapping(uint256 => Proposal) public Proposals;
     uint public ProposalCount;
 
-    constructor() public {
-        symbol = "QVV";
-        name = "QV Voting";
+    constructor(address token) {
+        stakingToken = IERC20(token);
+    }
+
+    function receiveMessage(
+        bytes32,
+        uint32 originChainId,
+        address,
+        bytes memory callData
+    ) external {
+        (uint256 flag, bytes memory payload) = abi.decode(
+            callData,
+            (uint256, bytes)
+        );
+
+        if (flag == 1) {
+            // vote
+            (bool vote, address voter, uint256 proposalId) = abi.decode(
+                payload,
+                (bool, address, uint256)
+            );
+
+            uint256 numTokens;
+            for (uint i = 0; i < chainIds.length; i++) {
+                uint256 amount = _balancesOfEachChain[voter][chainIds[i]];
+                numTokens += amount;
+            }
+
+            _castVote(proposalId, numTokens, vote, voter);
+        } else if (flag == 2) {
+            // stake
+            (uint256 amount, address voter) = abi.decode(
+                payload,
+                (uint256, address)
+            );
+
+            _balancesOfEachChain[voter][originChainId] += amount;
+        } else if (flag == 3) {
+            // withdraw
+            (uint256 amount, address voter) = abi.decode(
+                payload,
+                (uint256, address)
+            );
+
+            _balancesOfEachChain[voter][originChainId] -= amount;
+        }
     }
 
     /**
@@ -64,6 +112,7 @@ contract Voting is Ownable {
      * @param _voteExpirationTime expiration time in minutes
      */
     function createProposal(
+        string calldata _title,
         string calldata _description,
         uint _voteExpirationTime
     ) external onlyOwner returns (uint) {
@@ -79,10 +128,12 @@ contract Voting is Ownable {
             _voteExpirationTime *
             1 seconds;
         curProposal.description = _description;
+        curProposal.title = _title;
 
         emit ProposalCreated(
             msg.sender,
             ProposalCount,
+            _title,
             _description,
             _voteExpirationTime
         );
@@ -168,23 +219,33 @@ contract Voting is Ownable {
         return (yesVotes, noVotes);
     }
 
+    function castVote(uint _ProposalID, bool _vote) external {
+        uint256 numTokens;
+        for (uint i = 0; i < chainIds.length; i++) {
+            uint256 amount = _balancesOfEachChain[msg.sender][chainIds[i]];
+            numTokens += amount;
+        }
+        _castVote(_ProposalID, numTokens, _vote, msg.sender);
+    }
+
     /**
      * @dev casts a vote.
      * @param _ProposalID the proposal id
      * @param numTokens number of voice credits
      * @param _vote true for yes, false for no
      */
-    function castVote(
+    function _castVote(
         uint _ProposalID,
         uint numTokens,
-        bool _vote
-    ) external validProposal(_ProposalID) {
+        bool _vote,
+        address _voter
+    ) internal validProposal(_ProposalID) {
         require(
             getProposalStatus(_ProposalID) == ProposalStatus.IN_PROGRESS,
             "proposal has expired."
         );
         require(
-            !userHasVoted(_ProposalID, msg.sender),
+            !userHasVoted(_ProposalID, _voter),
             "user already voted on this proposal"
         );
         require(
@@ -192,21 +253,67 @@ contract Voting is Ownable {
             "for this proposal, the voting time expired"
         );
 
-        _balances[msg.sender] = _balances[msg.sender].sub(numTokens);
+        // _balances[msg.sender] = _balances[msg.sender].sub(numTokens);
 
         uint256 weight = sqrt(numTokens); // QV Vote
 
         Proposal storage curproposal = Proposals[_ProposalID];
 
-        curproposal.voterInfo[msg.sender] = Voter({
+        curproposal.voterInfo[_voter] = Voter({
             hasVoted: true,
             vote: _vote,
             weight: weight
         });
 
-        curproposal.voters.push(msg.sender);
+        curproposal.voters.push(_voter);
 
-        emit VoteCasted(msg.sender, _ProposalID, weight);
+        emit VoteCasted(_voter, _ProposalID, weight);
+    }
+
+    function stake(uint _amount) external payable {
+        require(_amount > 0, "amount = 0");
+        stakingToken.transferFrom(msg.sender, address(this), _amount);
+        _balancesOfEachChain[msg.sender][uint32(block.chainid)] += _amount;
+        _totalSupply += _amount;
+    }
+
+    function withdraw(uint _amount) external payable {
+        require(_amount > 0, "amount = 0");
+        _balancesOfEachChain[msg.sender][uint32(block.chainid)] -= _amount;
+        _totalSupply -= _amount;
+        stakingToken.transfer(msg.sender, _amount);
+    }
+
+    function addChainId(uint32 chainId) external onlyOwner {
+        chainIds.push(chainId);
+    }
+
+    function deleteChainId(uint32 chainId) external onlyOwner {
+        for (uint i = 0; i < chainIds.length; i++) {
+            uint32 id = chainIds[i];
+            if (id == chainId) {
+                delete chainIds[i];
+            }
+        }
+    }
+
+    function getChainIds() external view returns (uint32[] memory) {
+        return chainIds;
+    }
+
+    function getBalanceOfEachChain(
+        uint32 chainId
+    ) external view returns (uint256) {
+        return _balancesOfEachChain[msg.sender][chainId];
+    }
+
+    function getTotalBalance() external view returns (uint256) {
+        uint256 total;
+        for (uint i = 0; i < chainIds.length; i++) {
+            total += _balancesOfEachChain[msg.sender][chainIds[i]];
+        }
+
+        return total;
     }
 
     /**
@@ -244,21 +351,5 @@ contract Voting is Ownable {
             y = z;
             z = (x / z + z) / 2;
         }
-    }
-
-    /**
-     * @dev minting more tokens for an account
-     */
-    function mint(address account, uint256 amount) public onlyOwner {
-        require(account != address(0), " mint to the zero address");
-        _totalSupply = _totalSupply.add(amount);
-        _balances[account] = _balances[account].add(amount);
-    }
-
-    /**
-     * @dev returns the balance of an account
-     */
-    function balanceOf(address account) public view returns (uint256) {
-        return _balances[account];
     }
 }

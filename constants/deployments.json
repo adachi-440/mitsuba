@@ -1,0 +1,13 @@
+{
+  "voting": "0xCE587a72d62037A791C5506AD4d315891057B83B",
+  "voting-request": {
+    "arbitrum-goerli": "0x950BB93b195C5eB968fc94C22d2183c985eadF7A",
+    "optimism-goerli": "0x4005a4060aA40fc9a084EBEEA2d4bD9890A52559",
+    "moonbase": "0x0dbB8A006B16d19aA85339b4CF6212E6b7119E3E"
+  },
+  "oft": {
+    "arbitrum-goerli": "0xbab231C700e256D8C97490Dd35035de0B826e6cD",
+    "optimism-goerli": "0x1A1dD5B23fBd4728BdFb0aF1831A426367fEFB43",
+    "moonbase": "0x73134edbD0bd74d4CdD7a6D3fCfe756e0cAca672"
+  }
+}

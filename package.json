@@ -8,10 +8,21 @@
   "scripts": {
     "build": "hardhat compile",
     "test": "hardhat test",
-    "deploy-goerli": "hardhat run --network goerli scripts/deploy.ts",
-    "deploy-oft-moonbase": "hardhat run --network moonbase scripts/deployOFT.ts",
+    "deploy-vote": "hardhat run --network arbitrum-goerli scripts/deploy.ts",
+    "deploy-oft-optimism-goerli": "hardhat run --network optimism-goerli scripts/deployOFT.ts",
     "deploy-oft-arbitrum-goerli": "hardhat run --network arbitrum-goerli scripts/deployOFT.ts",
-    "bridge-oft": "hardhat run --network moonbase test/oftTest.ts"
+    "deploy-oft-moonbase": "hardhat run --network moonbase scripts/deployOFT.ts",
+    "deploy-vote-request-moonbase": "hardhat run --network moonbase scripts/deployVoteRequest.ts",
+    "deploy-vote-request-optimism-goerli": "hardhat run --network optimism-goerli scripts/deployVoteRequest.ts",
+    "bridge-oft": "hardhat run --network optimism-goerli test/oftTest.ts",
+    "bridge-oft-arbitrum-goerli": "hardhat run --network arbitrum-goerli test/oftTest.ts",
+    "stake": "hardhat run --network arbitrum-goerli test/stake.ts",
+    "withdraw": "hardhat run --network arbitrum-goerli test/withdraw.ts",
+    "vote": "hardhat run --network arbitrum-goerli test/vote.ts",
+    "bridge-stake": "hardhat run --network optimism-goerli test/stake.ts",
+    "bridge-withdraw": "hardhat run --network optimism-goerli test/withdraw.ts",
+    "bridge-vote": "hardhat run --network optimism-goerli test/vote.ts",
+    "create-proposal": "hardhat run --network arbitrum-goerli test/proposal.ts"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",
