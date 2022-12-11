@@ -1,13 +1,14 @@
 {
-  "voting": "0xCE587a72d62037A791C5506AD4d315891057B83B",
+  "voting": "0x8AAC39657A7EB2Db437C215B20Bdb7b5A96CEBe6",
   "voting-request": {
-    "arbitrum-goerli": "0x950BB93b195C5eB968fc94C22d2183c985eadF7A",
-    "optimism-goerli": "0x4005a4060aA40fc9a084EBEEA2d4bD9890A52559",
-    "moonbase": "0x0dbB8A006B16d19aA85339b4CF6212E6b7119E3E"
+    "arbitrum-goerli": "0x73AFABCad6cb89f0899ef2b1D16349bE105db6fC",
+    "optimism-goerli": "0x79b71573F5c73D89C767717D98693FDd7d6C942B",
+    "moonbase": "0x7268d5bc5AD0d3E0f333a481a306108A766b0A8C"
   },
   "oft": {
-    "arbitrum-goerli": "0xbab231C700e256D8C97490Dd35035de0B826e6cD",
-    "optimism-goerli": "0x1A1dD5B23fBd4728BdFb0aF1831A426367fEFB43",
-    "moonbase": "0x73134edbD0bd74d4CdD7a6D3fCfe756e0cAca672"
+    "arbitrum-goerli": "0xB9207fFEf813A97394a814098f37a11B9523D7Ae",
+    "optimism-goerli": "0x88650b018f0F0981d8C136B25d7e12F1e2ffd264",
+    "moonbase": "0xDd14C00Aa47b585c06d48F8FaCB6EaB9a20aCdDc",
+    "mumbai": "0xc466b8f07776E4F53a23d9C8E8B331f2ED5d776c"
   }
 }
