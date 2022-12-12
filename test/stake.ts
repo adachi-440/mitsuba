@@ -45,7 +45,7 @@ async function main() {
   // const fee = fees[0]
   // console.log(`fees is the message fee in wei: ${fee}`)
 
-  if (chainId === 421613) {
+  if (chainId === 80001) {
     const voting = await ethers.getContractAt("Voting", VOTE);
     tx = await voting.stake(amount)
     console.log('staking...')
@@ -56,7 +56,7 @@ async function main() {
     tx = await voteRequest.setVote(DEPLOYMENTS.voting)
     console.log('setting...')
     await tx.wait();
-    tx = await voteRequest.stake(amount, 1, 421613, { gasLimit: 2000000, value: 0 })
+    tx = await voteRequest.stake(amount, 1, 80001, { gasLimit: 2000000, value: 0 })
     console.log('sending message...')
     result = await tx.wait();
     console.log(result);

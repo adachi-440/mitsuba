@@ -30,17 +30,21 @@ async function main() {
   // result = await approveTx.wait();
   // console.log(result);
 
-  // const tx = await voting.createProposal("Test", "Test", 60)
+  // const tx = await voting.createProposal("Test", "Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test ", 180)
 
   // console.log('sending message...')
   // result = await tx.wait();
   // console.log(result);
 
-  result = await voting.countVotes(1)
-  console.log(`Vote Result: ${result}`)
+  // result = await voting.countVotes(2)
+  // console.log(`Vote Result: ${result}`)
 
-  result = await voting.ProposalCount()
-  console.log(`Proposal Count: ${result}`)
+  // result = await voting.ProposalCount()
+  // console.log(`Proposal Count: ${result}`)
+
+  result = await voting.getBalanceOfEachChain(420)
+  console.log(`Proposals: ${result}`)
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere

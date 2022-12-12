@@ -49,6 +49,19 @@ contract Voting is Ownable, IReceiver {
         mapping(address => Voter) voterInfo;
     }
 
+    struct ProposalData {
+        uint256 id;
+        address creator;
+        ProposalStatus status;
+        uint256 yesVotes;
+        uint256 noVotes;
+        string title;
+        string description;
+        address[] voters;
+        uint expirationTime;
+        Voter[] voterInfo;
+    }
+
     struct Voter {
         bool hasVoted;
         bool vote;
@@ -314,6 +327,57 @@ contract Voting is Ownable, IReceiver {
         }
 
         return total;
+    }
+
+    function getAllProposals() external view returns (ProposalData[] memory) {
+        ProposalData[] memory proposals = new ProposalData[](ProposalCount);
+        for (uint256 i = 1; i < ProposalCount + 1; i++) {
+            Proposal storage pro = Proposals[i];
+            Voter[] memory voters = new Voter[](pro.voters.length);
+            for (uint256 j = 0; j < pro.voters.length; j++) {
+                voters[j] = pro.voterInfo[pro.voters[j]];
+            }
+            proposals[i - 1] = ProposalData(
+                i,
+                pro.creator,
+                pro.status,
+                pro.yesVotes,
+                pro.noVotes,
+                pro.title,
+                pro.description,
+                pro.voters,
+                pro.expirationTime,
+                voters
+            );
+        }
+
+        return proposals;
+    }
+
+    function getProposal(
+        uint256 id
+    ) external view returns (ProposalData memory) {
+        Proposal storage pro = Proposals[id];
+
+        Voter[] memory voters = new Voter[](pro.voters.length);
+        for (uint256 i = 0; i < pro.voters.length; i++) {
+            voters[i] = pro.voterInfo[pro.voters[i]];
+        }
+
+        ProposalData memory proposal = ProposalData(
+            id,
+            pro.creator,
+            pro.status,
+            pro.yesVotes,
+            pro.noVotes,
+            pro.title,
+            pro.description,
+            pro.voters,
+            pro.expirationTime,
+            voters
+        );
+
+        return proposal;
     }
 
     /**

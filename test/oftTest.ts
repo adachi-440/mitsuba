@@ -32,7 +32,7 @@ async function main() {
 
 
   let approveTx;
-  if (chainId === 421613) {
+  if (chainId === 80001) {
     approveTx = await oft.approve(VOTE, amount)
     console.log('approving...')
     result = await approveTx.wait();
