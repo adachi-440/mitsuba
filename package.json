@@ -24,7 +24,7 @@
     "bridge-stake": "hardhat run --network optimism-goerli test/stake.ts",
     "bridge-withdraw": "hardhat run --network optimism-goerli test/withdraw.ts",
     "bridge-vote": "hardhat run --network optimism-goerli test/vote.ts",
-    "create-proposal": "hardhat run --network arbitrum-goerli test/proposal.ts"
+    "create-proposal": "hardhat run --network mumbai test/proposal.ts"
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.4.7",

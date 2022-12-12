@@ -1,1 +1,2 @@
 import "./setChainId";
+import "./setVoting"

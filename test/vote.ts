@@ -49,7 +49,7 @@ async function main() {
   // await tx.wait();
 
 
-  if (chainId === 421613) {
+  if (chainId === 80001) {
     const voting = await ethers.getContractAt("Voting", VOTE);
     tx = await voting.castVote(1, true)
     console.log('staking...')
@@ -57,7 +57,7 @@ async function main() {
     console.log(result);
 
   } else {
-    tx = await voteRequest.requestVote(true, 1, 421613, 2, { gasLimit: 2000000, value: 0 })
+    tx = await voteRequest.requestVote(true, 1, 80001, 2, { gasLimit: 2000000, value: 0 })
 
     console.log('sending message...')
     result = await tx.wait();
