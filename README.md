@@ -1,6 +1,6 @@
 ![logo](docs/mitsuha_logo.png)
 
-# Mitsuha - Cross Chain Voting System
+# Mitsuba - Cross Chain Voting System
 
 ## Summary
 
