@@ -232,13 +232,13 @@ contract Voting is Ownable, IReceiver {
         return (yesVotes, noVotes);
     }
 
-    function castVote(uint _ProposalID, bool _vote) external {
+    function castVote(uint _ProposalID, bool _vote, address _sender) external {
         uint256 numTokens;
         for (uint i = 0; i < chainIds.length; i++) {
-            uint256 amount = _balancesOfEachChain[msg.sender][chainIds[i]];
+            uint256 amount = _balancesOfEachChain[_sender][chainIds[i]];
             numTokens += amount;
         }
-        _castVote(_ProposalID, numTokens, _vote, msg.sender);
+        _castVote(_ProposalID, numTokens, _vote, _sender);
     }
 
     /**
@@ -285,8 +285,8 @@ contract Voting is Ownable, IReceiver {
 
     function stake(uint _amount) external payable {
         require(_amount > 0, "amount = 0");
-        stakingToken.transferFrom(msg.sender, address(this), _amount);
-        _balancesOfEachChain[msg.sender][uint32(block.chainid)] += _amount;
+        stakingToken.transferFrom(_msgSender(), address(this), _amount);
+        _balancesOfEachChain[_msgSender()][uint32(block.chainid)] += _amount;
         _totalSupply += _amount;
     }
 
