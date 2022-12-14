@@ -4,8 +4,9 @@ pragma solidity ^0.8.9;
 import "./interfaces/ICrossChainRouter.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@opengsn/contracts/src/ERC2771Recipient.sol";
 
-contract VoteRequest is Ownable {
+contract VoteRequest is Ownable, ERC2771Recipient {
     IERC20 public immutable stakingToken;
     ICrossChainRouter private _router;
     address private _vote;
@@ -15,10 +16,16 @@ contract VoteRequest is Ownable {
     // User address => staked amount
     mapping(address => uint) public balanceOf;
 
-    constructor(address router, address voteAddr, address token) {
+    constructor(
+        address router,
+        address voteAddr,
+        address token,
+        address _trustedForwarder
+    ) {
         _router = ICrossChainRouter(router);
         _vote = voteAddr;
         stakingToken = IERC20(token);
+        _setTrustedForwarder(_trustedForwarder);
     }
 
     function requestVote(
@@ -27,7 +34,7 @@ contract VoteRequest is Ownable {
         uint32 dstChainId,
         uint256 proposalId
     ) external payable {
-        bytes memory p = abi.encode(vote, msg.sender, proposalId);
+        bytes memory p = abi.encode(vote, _msgSender(), proposalId);
         bytes memory payload = abi.encode(1, p);
         _router.sendMessage{value: msg.value}(
             protocolId,
@@ -86,5 +93,23 @@ contract VoteRequest is Ownable {
 
     function setVote(address voteAddr) public onlyOwner {
         _vote = voteAddr;
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(Context, ERC2771Recipient)
+        returns (address)
+    {
+        return super._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        override(Context, ERC2771Recipient)
+        returns (bytes calldata)
+    {
+        return super._msgData();
     }
 }

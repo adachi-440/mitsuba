@@ -1,9 +1,11 @@
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
 import DEPLOYMENTS from "../constants/deployments.json"
+import FORWARDERS from "../constants/trustedForwarder.json"
 
 async function main() {
   const Voting = await ethers.getContractFactory("Voting");
-  const voting = await Voting.deploy(DEPLOYMENTS.oft["arbitrum-goerli"]);
+  const forwarder = FORWARDERS[network.name as keyof typeof FORWARDERS]
+  const voting = await Voting.deploy(DEPLOYMENTS.oft[network.name as keyof typeof DEPLOYMENTS.oft]);
 
   await voting.deployed();
 

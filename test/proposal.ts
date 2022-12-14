@@ -30,20 +30,20 @@ async function main() {
   // result = await approveTx.wait();
   // console.log(result);
 
-  // const tx = await voting.createProposal("Test", "Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test ", 180)
+  // const tx = await voting.createProposal("Mitsuha on Moonbeam", "Due to the rapid expansion of the Polkadot and Moonbeam ecosystems, we propose to launch Mitsuha on Moonbeam who are looking for use cases for cross-chains.", 2880)
 
   // console.log('sending message...')
   // result = await tx.wait();
   // console.log(result);
 
-  // result = await voting.countVotes(2)
-  // console.log(`Vote Result: ${result}`)
+  result = await voting.getProposal(5)
+  console.log(`Vote Result: ${result}`)
 
   // result = await voting.ProposalCount()
   // console.log(`Proposal Count: ${result}`)
 
-  result = await voting.getBalanceOfEachChain(420)
-  console.log(`Proposals: ${result}`)
+  // result = await voting.getBalanceOfEachChain(420)
+  // console.log(`Proposals: ${result}`)
 
 }
 
